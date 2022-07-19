@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/index.js",
     "dev": "nodemon ./src/index.ts",
-    "prod-create": "pm2 start index.ts --name \"apod-bot\" -- --color && pm2 monit",
+    "prod-create": "pm2 start src/index.ts --name \"apod-bot\" -- --color && pm2 monit",
     "prod": "pm2 start apod-bot",
     "prod-monit": "pm2 start apod-bot && pm2 monit",
     "build": "tsc",
