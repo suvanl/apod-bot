@@ -1,0 +1,53 @@
+{
+  "name": "apod-bot",
+  "version": "1.0.0",
+  "description": "A social media bot that posts NASA's Astronomy Picture of the Day in HD",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./dist/index.js",
+    "dev": "nodemon ./src/index.ts",
+    "build": "tsc",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "astronomy",
+    "NASA",
+    "APOD",
+    "social media",
+    "Instagram",
+    "Twitter",
+    "bot"
+  ],
+  "contributors": [
+    {
+      "name": "suvanl",
+      "url": "https://github.com/suvanl"
+    },
+    {
+      "name": "North3611",
+      "url": "https://github.com/North3611"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/common-tags": "^1.8.1",
+    "@types/cron": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
+    "dotenv": "^16.0.1",
+    "eslint": "^8.18.0",
+    "nodemon": "^2.0.18",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@types/luxon": "^2.3.2",
+    "axios": "^0.27.2",
+    "chalk": "^4.1.2",
+    "common-tags": "^1.8.2",
+    "cron": "^2.1.0",
+    "luxon": "^2.4.0",
+    "twitter-api-v2": "^1.12.3"
+  }
+}
