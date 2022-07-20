@@ -47,7 +47,7 @@ const tweet = async (imagePath: string): Promise<void> => {
     // Fetch and download image data
     const image = await fetchImageData();
     const tweetText = stripIndents`
-        ${image.title} ${image.copyright ? `(© ${image.copyright})` : ""} | ${image.date}
+        ${image.title}${image.copyright ? ` (© ${image.copyright})` : ""} | ${image.date}
         #NASA #apod
 
         ${truncate(image.explanation, 150)}
@@ -66,9 +66,8 @@ const tweet = async (imagePath: string): Promise<void> => {
 };
 
 const run = (): void => {
-    tweet(`${IMAGE_PATH_FORMAT}`);
+    downloadImage().then(() => tweet(`${IMAGE_PATH_FORMAT}`));
 };
 
 init();
-downloadImage();
 createJob(run);
