@@ -32,7 +32,7 @@ const downloadImage = async (): Promise<DownloadedImageData> => {
     const fileExt = getUrlFileExtension(data.hdurl);
     IMAGE_PATH += `.${fileExt}`;
     logger.info(`Downloading image for ${TIMESTAMP}...`);
-    fileExt === "jpg" ? logger.info(`Filetype is: ${fileExt}`) : logger.warn(`Filetype is: ${fileExt}`);
+    fileExt === "jpg" ? logger.debug(`Filetype is: ${fileExt}`) : logger.warn(`Filetype is: ${fileExt}`);
 
     // If the image doesn't already exist...
     if (!fs.existsSync(IMAGE_PATH)) {
