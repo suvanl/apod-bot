@@ -61,7 +61,7 @@ const tweet = async (imageData: DownloadedImageData): Promise<void> => {
 
     try {
         // Upload the image and tweet it with a description
-        const mediaId = await client.v1.uploadMedia(imageData.path as string, { type: imageData.type });
+        const mediaId = await client.v1.uploadMedia(imageData.path as string, { mimeType: imageData.type });
         logger.debug(`media ID: ${mediaId}`);
 
         await client.v1.tweet(tweetText, { media_ids: mediaId });
