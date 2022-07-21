@@ -6,7 +6,7 @@ export type TwitterClient = {
 }
 
 export type APODResponse = {
-    copyright: string;
+    copyright?: string;
     date: string;
     explanation: string;
     hdurl: string;
