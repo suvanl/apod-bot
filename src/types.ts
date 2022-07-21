@@ -15,3 +15,8 @@ export type APODResponse = {
     title: string;
     url: string;
 }
+
+export type DownloadedImageData = {
+    path?: string;
+    type?: string;
+}
