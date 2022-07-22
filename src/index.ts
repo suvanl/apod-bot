@@ -67,7 +67,7 @@ const tweet = async (imageData: DownloadedImageData): Promise<void> => {
         await client.v1.tweet(tweetText, { media_ids: mediaId });
         logger.log("✅ Tweet successfully sent");
     } catch (err) {
-        logger.error(`Twitter error: ${err}`);
+        logger.error(`Twitter ${err}`);
     }
 };
 
