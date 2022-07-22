@@ -28,15 +28,15 @@ const downloadImage = async (): Promise<DownloadedImageData> => {
 
     const data = await fetchImageData();
 
-    let img = await axios.get(data.hdurl, { responseType: "stream" });
-    if (parseInt(img.headers["content-length"]) > 5242880) {
-        img = await axios.get(data.url, { responseType: "stream" });
-    }
-    
     const fileExt = getUrlFileExtension(data.hdurl);
     IMAGE_PATH += `.${fileExt}`;
     logger.info(`Downloading image for ${TIMESTAMP}...`);
     fileExt === "jpg" ? logger.debug(`Filetype is: ${fileExt}`) : logger.warn(`Filetype is: ${fileExt}`);
+    
+    let img = await axios.get(data.hdurl, { responseType: "stream" });
+    if (fileExt === "jpg" && parseInt(img.headers["content-length"]) > 5242880) {
+        img = await axios.get(data.url, { responseType: "stream" });
+    }
 
     // If the image doesn't already exist...
     if (!fs.existsSync(IMAGE_PATH)) {
