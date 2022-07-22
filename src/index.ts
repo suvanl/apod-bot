@@ -9,6 +9,8 @@ import { APODResponse, DownloadedImageData } from "./types";
 import { getArchiveLink, getUrlFileExtension, truncate } from "./util/functions";
 import { createJob } from "./job";
 
+const IMAGE_MAX_SIZE = 5242880;  // 5MB
+
 const init = (): void => {
     logger.info(`Running in ${process.env.NODE_ENV} mode`);
 };
@@ -23,18 +25,26 @@ const fetchImageData = async (): Promise<APODResponse> => {
 };
 
 const downloadImage = async (): Promise<DownloadedImageData> => {
+    // Get current date timestamp for the file name
     const TIMESTAMP = `${DateTime.now().toFormat("y-MM-dd")}`;
     let IMAGE_PATH = `img/${TIMESTAMP}`;
 
     const data = await fetchImageData();
 
+    // Determine the file extension and append it to the image path
     const fileExt = getUrlFileExtension(data.hdurl);
     IMAGE_PATH += `.${fileExt}`;
+
     logger.info(`Downloading image for ${TIMESTAMP}...`);
+
+    // If file type is not an image, display a warning in the console
     fileExt === "jpg" ? logger.debug(`Filetype is: ${fileExt}`) : logger.warn(`Filetype is: ${fileExt}`);
     
+    // Use HD url by default
     let img = await axios.get(data.hdurl, { responseType: "stream" });
-    if (fileExt === "jpg" && parseInt(img.headers["content-length"]) > 5242880) {
+
+    // If the file is an image and the file size exceeds the max image upload size (5MB), use the SD URL
+    if (fileExt === "jpg" && parseInt(img.headers["content-length"]) > IMAGE_MAX_SIZE) {
         img = await axios.get(data.url, { responseType: "stream" });
     }
 
