@@ -6,7 +6,7 @@ import * as logger from "./util/logger";
 import { DateTime } from "luxon";
 import { stripIndents } from "common-tags";
 import { APODResponse, DownloadedImageData } from "./types";
-import { getArchiveLink, getUrlFileExtension, truncate } from "./util/util";
+import { getArchiveLink, getUrlFileExtension, truncate } from "./util/functions";
 import { createJob } from "./job";
 
 const init = (): void => {
