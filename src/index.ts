@@ -27,7 +27,11 @@ const downloadImage = async (): Promise<DownloadedImageData> => {
     let IMAGE_PATH = `img/${TIMESTAMP}`;
 
     const data = await fetchImageData();
-    const img = await axios.get(data.hdurl, { responseType: "stream" });
+
+    let img = await axios.get(data.hdurl, { responseType: "stream" });
+    if (parseInt(img.headers["content-length"]) > 5242880) {
+        img = await axios.get(data.url, { responseType: "stream" });
+    }
     
     const fileExt = getUrlFileExtension(data.hdurl);
     IMAGE_PATH += `.${fileExt}`;
