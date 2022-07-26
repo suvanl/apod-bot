@@ -1,69 +1,20 @@
 import "dotenv/config";
-import axios from "axios";
-import fs from "fs";
 import client from "./client";
 import * as logger from "./util/logger";
-import { DateTime } from "luxon";
 import { stripIndents } from "common-tags";
-import { APODResponse, DownloadedImageData } from "./types";
-import { getArchiveLink, getUrlFileExtension, truncate } from "./util/functions";
+import { DownloadedImageData } from "./types";
 import { createJob } from "./job";
-
-const IMAGE_MAX_SIZE = 5242880;  // 5MB
+import { getArchiveLink, truncate } from "./util/functions";
+import { fetchMediaData } from "./tools/common/fetch";
+import { downloadImage } from "./tools/download/image";
 
 const init = (): void => {
     logger.info(`Running in ${process.env.NODE_ENV} mode`);
 };
 
-const fetchImageData = async (): Promise<APODResponse> => {
-    // Fetch image data from the NASA APOD API
-    const url = `https://api.nasa.gov/planetary/apod?api_key=${process.env.NASA_API_KEY}`;
-    const img = await axios.get<APODResponse>(url);
-
-    // Return the JSON object containing data such as the author, description and image URL
-    return img.data;
-};
-
-const downloadImage = async (): Promise<DownloadedImageData> => {
-    // Get current date timestamp for the file name
-    const TIMESTAMP = `${DateTime.now().toFormat("y-MM-dd")}`;
-    let IMAGE_PATH = `img/${TIMESTAMP}`;
-
-    const data = await fetchImageData();
-
-    // Determine the file extension and append it to the image path
-    const fileExt = getUrlFileExtension(data.hdurl);
-    IMAGE_PATH += `.${fileExt}`;
-
-    logger.info(`Downloading image for ${TIMESTAMP}...`);
-
-    // If file type is not an image, display a warning in the console
-    fileExt === "jpg" ? logger.debug(`Filetype is: ${fileExt}`) : logger.warn(`Filetype is: ${fileExt}`);
-    
-    // Use HD url by default
-    let img = await axios.get(data.hdurl, { responseType: "stream" });
-
-    // If the file is an image and the file size exceeds the max image upload size (5MB), use the SD URL
-    if (fileExt === "jpg" && parseInt(img.headers["content-length"]) > IMAGE_MAX_SIZE) {
-        img = await axios.get(data.url, { responseType: "stream" });
-    }
-
-    // If the image doesn't already exist...
-    if (!fs.existsSync(IMAGE_PATH)) {
-        // Download image with file format "YYYY-MM-DD.jpg"
-        img.data.pipe(fs.createWriteStream(IMAGE_PATH));
-        
-        // Return the image file path and file type
-        return { path: IMAGE_PATH, type: fileExt };
-    } else {
-        logger.log(`Attempted to download image but it already exists (${IMAGE_PATH})`);
-        return { path: undefined, type: undefined };
-    }
-};
-
 const tweet = async (imageData: DownloadedImageData): Promise<void> => {
     // Fetch and download image data
-    const image = await fetchImageData();
+    const image = await fetchMediaData();
     const tweetText = stripIndents`
         ${image.title}${image.copyright ? ` (© ${image.copyright})` : ""} | ${image.date}
         #NASA #apod
