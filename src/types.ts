@@ -16,7 +16,7 @@ export type APODResponse = {
     url: string;
 }
 
-export type DownloadedImageData = {
+export type DownloadedMediaData = {
     path?: string;
     type?: string;
 }

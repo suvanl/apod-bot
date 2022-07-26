@@ -3,11 +3,11 @@ import axios from "axios";
 import * as logger from "../../util/logger";
 import { DateTime } from "luxon";
 import { fetchMediaData } from "../common/fetch";
-import { DownloadedImageData } from "../../types";
+import { DownloadedMediaData } from "../../types";
 import { getUrlFileExtension } from "../../util/functions";
 import { IMAGE_MAX_SIZE } from "../../util/constants";
 
-export const downloadImage = async (): Promise<DownloadedImageData> => {
+export const downloadImage = async (): Promise<DownloadedMediaData> => {
     // Get current date timestamp for the file name
     const TIMESTAMP = `${DateTime.now().toFormat("y-MM-dd")}`;
     let IMAGE_PATH = `img/${TIMESTAMP}`;

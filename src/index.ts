@@ -2,7 +2,7 @@ import "dotenv/config";
 import client from "./client";
 import * as logger from "./util/logger";
 import { stripIndents } from "common-tags";
-import { DownloadedImageData } from "./types";
+import { DownloadedMediaData } from "./types";
 import { createJob } from "./job";
 import { getArchiveLink, truncate } from "./util/functions";
 import { fetchMediaData } from "./tools/common/fetch";
@@ -12,7 +12,7 @@ const init = (): void => {
     logger.info(`Running in ${process.env.NODE_ENV} mode`);
 };
 
-const tweet = async (imageData: DownloadedImageData): Promise<void> => {
+const tweet = async (imageData: DownloadedMediaData): Promise<void> => {
     // Fetch and download image data
     const image = await fetchMediaData();
     const tweetText = stripIndents`
