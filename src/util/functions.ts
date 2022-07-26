@@ -5,11 +5,9 @@ export const truncate = (input: string, length: number): string => {
 
 export const getArchiveLink = (date: string): string => {
     // API date format: YYYY-MM-DD
-    const archiveDate = date.slice(2, date.length).replace(/-/g, "");
-
     // Archive date format: YYMMDD
-    const link =`https://apod.nasa.gov/apod/ap${archiveDate}.html`;
-    return link;
+    const archiveDate = date.slice(2, date.length).replace(/-/g, "");
+    return `https://apod.nasa.gov/apod/ap${archiveDate}.html`;
 };
 
 export const getUrlFileExtension = (url: string): string | undefined => {
