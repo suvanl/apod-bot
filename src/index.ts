@@ -38,11 +38,11 @@ const tweet = async (media: DownloadedMediaData): Promise<void> => {
 };
 
 const run = async (): Promise<void> => {
-    const data = await fetchMediaData();
+    const { media_type } = await fetchMediaData();
 
     let media;
-    if (data.media_type === "image") media = await downloadImage();
-    else if (data.media_type === "video") media = await downloadYouTubeVideo();
+    if (media_type === "image") media = await downloadImage();
+    else if (media_type === "video") media = await downloadYouTubeVideo();
     else media = { path: "", type: "" };
 
     setTimeout(tweet, 3000, media);
