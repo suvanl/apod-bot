@@ -14,6 +14,9 @@ export const downloadYouTubeVideo = async (): Promise<DownloadedMediaData> => {
     const TIMESTAMP = `${DateTime.now().toFormat("y-MM-dd")}`;
     const MEDIA_PATH = `img/${TIMESTAMP}.mp4`;
 
+    logger.info(`Downloading video for ${TIMESTAMP}...`);
+    logger.debug("Filetype is: mp4");
+
     if (!fs.existsSync(MEDIA_PATH)) {
         // Check available video formats
         const videoId = ytdl.getURLVideoID(url);
