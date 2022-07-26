@@ -15,7 +15,7 @@ export const downloadImage = async (): Promise<DownloadedMediaData> => {
     const data = await fetchMediaData();
 
     // Determine the file extension and append it to the image path
-    const fileExt = getUrlFileExtension(data.hdurl);
+    const fileExt = getUrlFileExtension(data.hdurl as string);
     IMAGE_PATH += `.${fileExt}`;
 
     logger.info(`Downloading image for ${TIMESTAMP}...`);
@@ -24,7 +24,7 @@ export const downloadImage = async (): Promise<DownloadedMediaData> => {
     fileExt === "jpg" ? logger.debug(`Filetype is: ${fileExt}`) : logger.warn(`Filetype is: ${fileExt}`);
     
     // Use HD url by default
-    let img = await axios.get(data.hdurl, { responseType: "stream" });
+    let img = await axios.get(data.hdurl as string, { responseType: "stream" });
 
     // If the file is an image and the file size exceeds the max image upload size (5MB), use the SD URL
     if (fileExt === "jpg" && parseInt(img.headers["content-length"]) > IMAGE_MAX_SIZE) {
