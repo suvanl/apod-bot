@@ -2,7 +2,7 @@ import { CronJob } from "cron";
 
 export const createJob = (tickFunction: () => void): void => {
     const job = new CronJob({
-        cronTime: "10 14 * * *",
+        cronTime: "0 8 * * *",
         onTick: tickFunction
     });
 
