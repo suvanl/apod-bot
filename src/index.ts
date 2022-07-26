@@ -43,6 +43,7 @@ const run = async (): Promise<void> => {
     let media;
     if (data.media_type === "image") media = await downloadImage();
     else if (data.media_type === "video") media = await downloadYouTubeVideo();
+    else media = { path: "", type: "" };
 
     setTimeout(tweet, 3000, media);
 };

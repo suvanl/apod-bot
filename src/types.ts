@@ -1,3 +1,5 @@
+import { EUploadMimeType } from "twitter-api-v2";
+
 export type TwitterClient = {
     appKey: string;
     appSecret: string;
@@ -18,5 +20,5 @@ export type APODResponse = {
 
 export type DownloadedMediaData = {
     path?: string;
-    type?: string;
+    type?: string | EUploadMimeType;
 }
