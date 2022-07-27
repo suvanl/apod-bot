@@ -3,7 +3,7 @@ import client from "./client";
 import * as logger from "./util/logger";
 import { stripIndents } from "common-tags";
 import { DateTime } from "luxon";
-import { DownloadedMediaData } from "./types";
+import { APODResponse, DownloadedMediaData } from "./types";
 import { createJob } from "./job";
 import { getArchiveLink, truncate } from "./util/functions";
 import { fetchMediaData } from "./tools/common/fetch";
@@ -16,7 +16,7 @@ const init = (): void => {
 
 const tweet = async (media: DownloadedMediaData): Promise<void> => {
     // Fetch and download image data
-    const image = await fetchMediaData();
+    const image: APODResponse = await fetchMediaData();
     const tweetText = stripIndents`
         ${image.title}${image.copyright ? ` (© ${image.copyright})` : ""} | ${image.date}
         #NASA #apod
@@ -34,7 +34,7 @@ const tweet = async (media: DownloadedMediaData): Promise<void> => {
         // Add alt text to images
         if (image.media_type === "image") {
             // Convert the ISO 8601 date to a format more suitable for alt text
-            const date = DateTime.fromISO(image.date).toLocaleString(DateTime.DATE_FULL, { locale: "en-gb" });
+            const date: string = DateTime.fromISO(image.date).toLocaleString(DateTime.DATE_FULL, { locale: "en-gb" });
 
             // Define the alt text and add it to the media by providing the media ID
             const altText = `NASA Astronomy Picture of the Day for ${date}, showing ${image.title}. For more detailed alt text, view the image on the linked webpage.`;
