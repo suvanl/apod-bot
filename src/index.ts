@@ -38,7 +38,7 @@ const tweet = async (media: DownloadedMediaData): Promise<void> => {
 
             // Define the alt text and add it to the media by providing the media ID
             const altText = `NASA Astronomy Picture of the Day for ${date}, showing ${image.title}. For more detailed alt text, view the image on the linked webpage.`;
-            await client.v1.createMediaMetadata(mediaId, { alt_text: { text: altText }});
+            await client.v1.createMediaMetadata(mediaId, { alt_text: { text: altText } });
         }
         
         // Tweet media with tweetText
