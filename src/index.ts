@@ -2,6 +2,7 @@ import "dotenv/config";
 import client from "./client";
 import * as logger from "./util/logger";
 import { stripIndents } from "common-tags";
+import { DateTime } from "luxon";
 import { DownloadedMediaData } from "./types";
 import { createJob } from "./job";
 import { getArchiveLink, truncate } from "./util/functions";
@@ -26,10 +27,21 @@ const tweet = async (media: DownloadedMediaData): Promise<void> => {
     `;
 
     try {
-        // Upload the image and tweet it with a description
+        // Upload media
         const mediaId = await client.v1.uploadMedia(media.path as string, { mimeType: media.type });
         logger.debug(`media ID: ${mediaId}`);
 
+        // Add alt text to images
+        if (image.media_type === "image") {
+            // Convert the ISO 8601 date to a format more suitable for alt text
+            const date = DateTime.fromISO(image.date).toLocaleString(DateTime.DATE_FULL, { locale: "en-gb" });
+
+            // Define the alt text and add it to the media by providing the media ID
+            const altText = `NASA Astronomy Picture of the Day for ${date}, showing ${image.title}. For more detailed alt text, view the image on the linked webpage.`;
+            await client.v1.createMediaMetadata(mediaId, { alt_text: { text: altText }});
+        }
+        
+        // Tweet media with tweetText
         await client.v1.tweet(tweetText, { media_ids: mediaId });
         logger.log("✅ Tweet successfully sent");
     } catch (err) {
