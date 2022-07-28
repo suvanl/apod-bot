@@ -23,9 +23,8 @@ export const downloadYouTubeVideo = async (): Promise<DownloadedMediaData> => {
         const info = await ytdl.getInfo(videoId);
 
         // Determine the best itag/quality to be used
-        let quality;
+        let quality: string | number = "highestvideo";
         if (info.formats.find(f => f.itag === 22)) quality = 22;
-        else quality = "highestvideo";
 
         // Download the image (using youtube-dl) with the format "YYYY-MM-DD.mp4"
         ytdl(url, { filter: format => format.container === "mp4", quality }).pipe(fs.createWriteStream(MEDIA_PATH));
