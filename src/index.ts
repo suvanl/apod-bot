@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import { APODResponse, DownloadedMediaData } from "./types";
 import { createJob } from "./job";
 import { getArchiveLink, truncate } from "./util/functions";
+import { TWEET_MAX_LENGTH } from "./util/constants";
 import { fetchMediaData } from "./tools/common/fetch";
 import { downloadImage } from "./tools/download/image";
 import { downloadYouTubeVideo } from "./tools/download/youtube";
@@ -17,14 +18,21 @@ const init = (): void => {
 const tweet = async (media: DownloadedMediaData): Promise<void> => {
     // Fetch and download image data
     const image: APODResponse = await fetchMediaData();
-    const tweetText = stripIndents`
+    let tweetText = stripIndents`
         ${image.title}${image.copyright ? ` (© ${image.copyright})` : ""} | ${image.date}
         #NASA #apod
 
-        ${truncate(image.explanation, 150)}
+        %expln%
 
         🔗 ${getArchiveLink(image.date)}
     `;
+
+    // Calculate how many characters we have left in the tweet
+    // formula: 280 - (tweetText.length - 7 [length of "%expln%"]) + 5 [due to link wrapping - ".html" gets cut off from end of archive links]
+    const remainingChars = TWEET_MAX_LENGTH - (tweetText.length - 7) + 5;
+
+    // Add explanation to tweetText and truncate it to the number of remaining chars (minus 1, for the ellipsis character)
+    tweetText = tweetText.replace(/%expln%/g, truncate(image.explanation, remainingChars - 1));
 
     try {
         // Upload media
