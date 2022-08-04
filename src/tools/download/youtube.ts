@@ -32,7 +32,7 @@ export const downloadYouTubeVideo = async (): Promise<DownloadedMediaData> => {
         // Return the image file path and file type
         return { path: MEDIA_PATH, type: EUploadMimeType.Mp4 };
     } else {
-        logger.log(`Attempted to download YouTube video but it already exists (${MEDIA_PATH})`);
+        logger.warn(`Attempted to download YouTube video but it already exists (${MEDIA_PATH})`);
         return { path: undefined, type: undefined };
     }
 };

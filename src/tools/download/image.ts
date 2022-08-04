@@ -39,7 +39,7 @@ export const downloadImage = async (): Promise<DownloadedMediaData> => {
         // Return the image file path and file type
         return { path: IMAGE_PATH, type: fileExt };
     } else {
-        logger.log(`Attempted to download image but it already exists (${IMAGE_PATH})`);
+        logger.warn(`Attempted to download image but it already exists (${IMAGE_PATH})`);
         return { path: undefined, type: undefined };
     }
 };
