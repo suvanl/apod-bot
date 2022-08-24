@@ -51,6 +51,7 @@
     "chalk": "^4.1.2",
     "common-tags": "^1.8.2",
     "cron": "^2.1.0",
+    "instagram-private-api": "^1.45.3",
     "luxon": "^2.4.0",
     "twitter-api-v2": "^1.12.3",
     "ytdl-core": "^4.11.0"

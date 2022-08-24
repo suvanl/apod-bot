@@ -1,5 +1,5 @@
 import { TwitterApi } from "twitter-api-v2";
-import { TwitterClient } from "./types";
+import { TwitterClient } from "../../types";
 
 const twitterClient = new TwitterApi({
     appKey: process.env.TWITTER_API_KEY,

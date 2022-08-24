@@ -22,3 +22,8 @@ export type DownloadedMediaData = {
     path?: string;
     type?: string | EUploadMimeType;
 }
+
+export type InstagramUsertag = {
+    user_id: number;
+    position: [number, number]
+}
