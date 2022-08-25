@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import { APODResponse, DownloadedMediaData } from "../../types";
 import { getArchiveLink, truncate } from "../../util/functions";
 import { TWEET_MAX_LENGTH } from "../../util/constants";
-import { fetchMediaData } from "../../tools/common/fetch";
+import { fetchAltText, fetchMediaData } from "../../tools/common/fetch";
 
 const tweet = async (media: DownloadedMediaData): Promise<void> => {
     // Fetch and download image data
@@ -36,8 +36,22 @@ const tweet = async (media: DownloadedMediaData): Promise<void> => {
             // Convert the ISO 8601 date to a format more suitable for alt text
             const date: string = DateTime.fromISO(image.date).toLocaleString(DateTime.DATE_FULL, { locale: "en-gb" });
 
+            // Fetch alt text from apod.nasa.gov
+            const originalAlt = await fetchAltText();
+
             // Define the alt text and add it to the media by providing the media ID
-            const altText = `NASA Astronomy Picture of the Day for ${date}, showing ${image.title}. For more detailed alt text, view the image on the linked webpage.`;
+            let altText = stripIndents`
+                NASA Astronomy Picture of the Day for ${date}, showing ${image.title}.
+
+                ${originalAlt}
+
+                Explanation:
+            `;
+
+            // Append explanation to alt text, keeping within the 1000 character limit
+            altText += ` ${truncate(image.explanation, 1000 - (altText.length - 3))}`;
+
+            // Attach alt text to media
             await client.v1.createMediaMetadata(mediaId, { alt_text: { text: altText } });
         }
         
