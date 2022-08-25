@@ -1,4 +1,8 @@
 import * as logger from "../../util/logger";
+import axios from "axios";
+import ytdl from "ytdl-core";
+import addToStory from "./story";
+import { DateTime } from "luxon";
 import { createWriteStream, readFile } from "fs";
 import { promisify } from "util";
 import { IgApiClient, MediaRepositoryConfigureResponseRootObject } from "instagram-private-api";
@@ -7,9 +11,6 @@ import { fetchMediaData } from "../../tools/common/fetch";
 import { stripIndents } from "common-tags";
 import { getArchiveLink, truncate } from "../../util/functions";
 import { IG_CAPTION_MAX_LENGTH } from "../../util/constants";
-import axios from "axios";
-import ytdl from "ytdl-core";
-import { DateTime } from "luxon";
 
 const readFileAsync = promisify(readFile);
 const ig = new IgApiClient();
@@ -57,6 +58,7 @@ const instaPost = async (media: DownloadedMediaData): Promise<void> => {
             });
 
             handleAfterPublish(publish);
+            addToStory(ig, path);
         }
 
         if (image.media_type === "video") {
@@ -74,6 +76,7 @@ const instaPost = async (media: DownloadedMediaData): Promise<void> => {
             });
 
             handleAfterPublish(publish);
+            addToStory(ig, path);
         }
     } catch (err) {
         logger.error(err);
