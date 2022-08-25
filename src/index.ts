@@ -19,10 +19,9 @@ const run = async (): Promise<void> => {
     else if (media_type === "video") media = await downloadYouTubeVideo();
     else media = { path: "", type: "" };
 
-    //setTimeout(tweet, 3000, media);
+    setTimeout(tweet, 3000, media);
     setTimeout(instaPost, 3000, media);
 };
 
 init();
-// createJob(run);
-run();
+createJob(run);
