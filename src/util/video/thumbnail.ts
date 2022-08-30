@@ -6,8 +6,6 @@ export const generateThumbnail = (media: APODResponse, videoPath: string): Promi
     const thumbnailPath = `img/${media.date}-thumb.jpg`;
     const filename = `${media.date}-thumb.jpg`;
 
-    console.log("in generateThumbnail...");
-
     return new Promise((resolve, reject) => {
         // Take a screenshot from halfway through the video
         ffmpeg({ source: videoPath })
