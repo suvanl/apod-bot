@@ -48,8 +48,6 @@ const tweet = async (media: DownloadedMediaData): Promise<void> => {
                 Explanation:
             `;
 
-            console.log(altText.length);
-
             // Append explanation to alt text, keeping well within the 1000 character limit
             altText += ` ${truncate(image.explanation, 900 - (altText.length - 3))}`;
 
