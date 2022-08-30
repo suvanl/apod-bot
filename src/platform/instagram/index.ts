@@ -1,16 +1,15 @@
 import * as logger from "../../util/logger";
-import axios from "axios";
-import ytdl from "ytdl-core";
+import ffmpeg from "fluent-ffmpeg";
 import addToStory from "./story";
-import { DateTime } from "luxon";
-import { createWriteStream, readFile } from "fs";
+import { readFile } from "fs";
 import { promisify } from "util";
+import { stripIndents } from "common-tags";
 import { IgApiClient, MediaRepositoryConfigureResponseRootObject } from "instagram-private-api";
 import { APODResponse, DownloadedMediaData, InstagramUsertag } from "../../types";
 import { fetchMediaData } from "../../tools/common/fetch";
-import { stripIndents } from "common-tags";
 import { getArchiveLink, truncate } from "../../util/functions";
 import { IG_CAPTION_MAX_LENGTH } from "../../util/constants";
+import { generateThumbnail } from "../../util/video/thumbnail";
 
 const readFileAsync = promisify(readFile);
 const ig = new IgApiClient();
@@ -23,7 +22,7 @@ const login = async (): Promise<void> => {
 const instaPost = async (media: DownloadedMediaData): Promise<void> => {
     await login();
 
-    const path = `${process.cwd()}/${media.path}`;
+    let path = media.path as string;
     
     // Fetch and download image data
     const image: APODResponse = await fetchMediaData();
@@ -62,25 +61,48 @@ const instaPost = async (media: DownloadedMediaData): Promise<void> => {
         }
 
         if (image.media_type === "video") {
-            const timestamp = `${DateTime.now().toFormat("y-MM-dd")}`;
-            const thumbPath = `${process.cwd()}/img/${timestamp}_thumb.jpg`;
+            ffmpeg.ffprobe(path, async (err, metadata) => {
+                if (err) logger.error(`ffprobe error: ${err}`);
 
-            const videoId = ytdl.getURLVideoID(image.url);
-            const thumbnail = await axios.get(`https://i.ytimg/vi/${videoId}/hqdefault.jpg`, { responseType: "stream" });
-            thumbnail.data.pipe(createWriteStream(thumbPath));
+                // Get duration of original video
+                const duration = metadata.format.duration as number;
 
-            const publish = await ig.publish.video({
-                video: await readFileAsync(path),
-                coverImage: await readFileAsync(thumbPath),
-                caption
+                // Check if video is longer than 60 seconds (max length for Instagram videos)
+                // ? Q: why not upload the video as a reel (max length 90 seconds)?
+                // ? A: instagram-private-api currently doesn't support this functionality
+                if (duration < 60) await publishVideo(path, caption, image);
+                else {
+                    // Trim video down to 60 seconds before publishing
+                    ffmpeg(path)
+                        .setStartTime("00:00:00")
+                        .setDuration(60)
+                        .output(`img/${image.date}_trim.mp4`)
+                        .on("end", async err => {
+                            !err ? logger.debug("[Instagram]: video trimmed to 60 seconds") : logger.error(`ffmpeg (end): ${err}`);
+                            path = `img/${image.date}_trim.mp4`;
+                            await publishVideo(path, caption, image);
+                        })
+                        .on("error", err => logger.error(`ffmpeg (error): ${err}`))
+                        .run();
+                }
             });
-
-            handleAfterPublish(publish);
-            addToStory(ig, path);
         }
     } catch (err) {
-        logger.error(err);
+        logger.error(`(instaPost) ${err}`);
     }
+};
+
+const publishVideo = async (path: string, caption: string, image: APODResponse): Promise<void> => {
+    const thumbnail = await generateThumbnail(image, path);
+
+    const publish = await ig.publish.video({
+        video: await readFileAsync(path),
+        coverImage: await readFileAsync(thumbnail.path as string),
+        caption
+    });
+
+    handleAfterPublish(publish);
+    addToStory(ig, thumbnail.path as string);
 };
 
 const handleAfterPublish = (publish: MediaRepositoryConfigureResponseRootObject) => {

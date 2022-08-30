@@ -11,16 +11,20 @@ const addToStory = async (client: IgApiClient, path: string): Promise<void> => {
     const file = await readFileAsync(path);
     const { pk } = await client.user.searchExact("dailyapod");
 
-    // note that StickerBuilder only creates the bounding box and relevant interactions for the sticker - the
-    // sticker itself is invisible and not rendered by Instagram, and should be done by the application instead
-    await client.publish.story({
-        file,
-        stickerConfig: new StickerBuilder()
-            .add(StickerBuilder.attachmentFromMedia((await client.feed.user(pk).items())[0]).center())
-            .build()
-    });
+    try {
+        // note that StickerBuilder only creates the bounding box and relevant interactions for the sticker - the
+        // sticker itself is invisible and not rendered by Instagram, and should be done by the application instead
+        await client.publish.story({
+            file,
+            stickerConfig: new StickerBuilder()
+                .add(StickerBuilder.attachmentFromMedia((await client.feed.user(pk).items())[0]).center())
+                .build()
+        });
 
-    logger.log("✅ Added to Instagram story");
+        logger.log("✅ Added to Instagram story");
+    } catch (err) {
+        logger.error(`Error adding to story: ${err}`);
+    }
 };
 
 export default addToStory;
