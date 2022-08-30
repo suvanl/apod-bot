@@ -1,6 +1,6 @@
 {
   "name": "apod-bot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A social media bot that posts NASA's Astronomy Picture of the Day in HD",
   "main": "index.js",
   "scripts": {
