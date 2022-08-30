@@ -1,17 +1,17 @@
 import fs from "fs";
 import ytdl from "ytdl-core";
 import * as logger from "../../util/logger";
-import { DateTime } from "luxon";
 import { fetchMediaData } from "../common/fetch";
-import { DownloadedMediaData } from "../../types";
+import { APODResponse, DownloadedMediaData } from "../../types";
 import { EUploadMimeType } from "twitter-api-v2";
 
-export const downloadYouTubeVideo = async (): Promise<DownloadedMediaData> => {
+export const downloadYouTubeVideo = async (data: APODResponse): Promise<DownloadedMediaData> => {
     // Get the video URL from the media data
     const { url } = await fetchMediaData();
 
     // Get current date timestamp for the file name
-    const TIMESTAMP = `${DateTime.now().toFormat("y-MM-dd")}`;
+    //const TIMESTAMP = DateTime.now().toFormat("y-MM-dd");
+    const TIMESTAMP = data.date;
     const MEDIA_PATH = `img/${TIMESTAMP}.mp4`;
 
     logger.info(`Downloading video for ${TIMESTAMP}...`);
