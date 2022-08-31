@@ -10,7 +10,6 @@ export const downloadYouTubeVideo = async (data: APODResponse): Promise<Download
     const { url } = await fetchMediaData();
 
     // Get current date timestamp for the file name
-    //const TIMESTAMP = DateTime.now().toFormat("y-MM-dd");
     const TIMESTAMP = data.date;
     const MEDIA_PATH = `img/${TIMESTAMP}.mp4`;
 

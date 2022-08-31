@@ -27,3 +27,8 @@ export type InstagramUsertag = {
     user_id: number;
     position: [number, number]
 }
+
+export type AspectRatio = {
+    width: number;
+    height: number;
+}
