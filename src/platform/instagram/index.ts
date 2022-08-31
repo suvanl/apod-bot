@@ -1,6 +1,9 @@
-import * as logger from "../../util/logger";
 import ffmpeg from "fluent-ffmpeg";
 import addToStory from "./story";
+import validateAspectRatio from "../../util/image/ratio";
+import cropImage from "../../util/image/crop";
+import AspectRatioValidationResult from "../../enums/aspectRatioValidationResult";
+import * as logger from "../../util/logger";
 import { readFile } from "fs";
 import { promisify } from "util";
 import { stripIndents } from "common-tags";
@@ -45,19 +48,21 @@ const instaPost = async (media: DownloadedMediaData): Promise<void> => {
 
     try {
         if (image.media_type === "image") {
-            const publish = await ig.publish.photo({
-                file: await readFileAsync(path),
-                caption
-                // usertags: {
-                //     in: [
-                //         // tag @nasa at position (0.5, 0.5)
-                //         await generateUsertagFromName("nasa", 0.5, 0.5)
-                //     ]
-                // }
-            });
+            // Check aspect ratio
+            const aspectRatio = await validateAspectRatio(path);
 
-            handleAfterPublish(publish);
-            addToStory(ig, path);
+            // If current aspect ratio is invalid
+            if (aspectRatio !== AspectRatioValidationResult.Valid) {
+                // Crop image to the maximum allowed aspect ratio
+                const cropped = await cropImage(image, media, aspectRatio);
+
+                // Publish cropped image
+                setTimeout(publishImage, 3000, cropped.path as string, caption);
+                return;
+            }
+
+            // Publish image
+            await publishImage(path, caption);
         }
 
         if (image.media_type === "video") {
@@ -87,9 +92,25 @@ const instaPost = async (media: DownloadedMediaData): Promise<void> => {
                 }
             });
         }
-    } catch (err) {
-        logger.error(`(instaPost) ${err}`);
+    } catch (err: any) {  // eslint-disable-line @typescript-eslint/no-explicit-any
+        logger.error(`(instaPost) ${err.stack}`);
     }
+};
+
+const publishImage = async (path: string, caption: string): Promise<void> => {
+    const publish = await ig.publish.photo({
+        file: await readFileAsync(path),
+        caption
+        // usertags: {
+        //     in: [
+        //         // tag @nasa at position (0.5, 0.5)
+        //         await generateUsertagFromName("nasa", 0.5, 0.5)
+        //     ]
+        // }
+    });
+
+    handleAfterPublish(publish);
+    addToStory(ig, path);
 };
 
 const publishVideo = async (path: string, caption: string, image: APODResponse): Promise<void> => {
