@@ -1,5 +1,5 @@
 import Jimp from "jimp";
-import AspectRatioValidationResult from "../../enums/aspectRatioValidationResult";
+import AspectRatioValidationResult from "../../enums/AspectRatioValidationResult";
 import * as logger from "../../util/logger";
 import { APODResponse, DownloadedMediaData } from "../../types";
 

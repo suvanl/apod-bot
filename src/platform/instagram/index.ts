@@ -2,7 +2,7 @@ import ffmpeg from "fluent-ffmpeg";
 import addToStory from "./story";
 import validateAspectRatio from "../../util/image/ratio";
 import cropImage from "../../util/image/crop";
-import AspectRatioValidationResult from "../../enums/aspectRatioValidationResult";
+import AspectRatioValidationResult from "../../enums/AspectRatioValidationResult";
 import * as logger from "../../util/logger";
 import { readFile } from "fs";
 import { promisify } from "util";

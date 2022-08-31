@@ -1,5 +1,5 @@
 import Jimp from "jimp";
-import AspectRatioValidationResult from "../../enums/aspectRatioValidationResult";
+import AspectRatioValidationResult from "../../enums/AspectRatioValidationResult";
 import { IG_IMAGE_ASPECT_RATIO_MAX as RATIO_MAX, IG_IMAGE_ASPECT_RATIO_MIN as RATIO_MIN } from "../constants";
 
 const validateAspectRatio = async (imgPath: string): Promise<AspectRatioValidationResult> => {
