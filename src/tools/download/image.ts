@@ -1,15 +1,14 @@
 import fs from "fs";
 import axios from "axios";
 import * as logger from "../../util/logger";
-import { DateTime } from "luxon";
 import { fetchMediaData } from "../common/fetch";
-import { DownloadedMediaData } from "../../types";
+import { APODResponse, DownloadedMediaData } from "../../types";
 import { getUrlFileExtension } from "../../util/functions";
 import { IMAGE_MAX_SIZE } from "../../util/constants";
 
-export const downloadImage = async (): Promise<DownloadedMediaData> => {
+export const downloadImage = async (apodData: APODResponse): Promise<DownloadedMediaData> => {
     // Get current date timestamp for the file name
-    const TIMESTAMP = `${DateTime.now().toFormat("y-MM-dd")}`;
+    const TIMESTAMP = apodData.date;
     let IMAGE_PATH = `img/${TIMESTAMP}`;
 
     const data = await fetchMediaData();

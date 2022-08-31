@@ -16,7 +16,7 @@ const run = async (): Promise<void> => {
     const res: APODResponse = await fetchMediaData();
 
     let media;
-    if (res.media_type === "image") media = await downloadImage();
+    if (res.media_type === "image") media = await downloadImage(res);
     else if (res.media_type === "video") media = await downloadYouTubeVideo(res);
     else media = { path: "", type: "" };
 
