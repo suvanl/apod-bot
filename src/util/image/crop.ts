@@ -21,7 +21,7 @@ const cropImage = async ({ date }: APODResponse, media: DownloadedMediaData, res
         let newWidth = Math.floor(image.bitmap.height * 1.91);
 
         // If newWidth is odd, make it even, to ensure the cropped image stays centred
-        // by cropping even amounts from the left and right of the original image
+        // by cropping even amounts from the top and bottom of the original image
         if (newWidth % 2 !== 0) newWidth -= 1; 
 
         return new Promise<DownloadedMediaData>((resolve, reject) => {
