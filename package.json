@@ -1,6 +1,6 @@
 {
   "name": "apod-bot",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "A social media bot that posts NASA's Astronomy Picture of the Day in HD",
   "main": "index.js",
   "scripts": {
@@ -59,6 +59,6 @@
     "jimp": "^0.16.1",
     "luxon": "^2.4.0",
     "twitter-api-v2": "^1.12.3",
-    "ytdl-core": "^4.11.1"
+    "ytdl-core": "^4.11.2"
   }
 }
