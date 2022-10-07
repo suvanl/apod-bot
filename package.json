@@ -39,6 +39,7 @@
     "@types/cron": "^2.0.0",
     "@types/fluent-ffmpeg": "^2.1.20",
     "@types/luxon": "^2.3.2",
+    "@types/sharp": "^0.31.0",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.0",
     "dotenv": "^16.0.1",
@@ -58,6 +59,7 @@
     "instagram-private-api": "^1.45.3",
     "jimp": "^0.16.1",
     "luxon": "^2.4.0",
+    "sharp": "^0.31.1",
     "twitter-api-v2": "^1.12.3",
     "ytdl-core": "^4.11.2"
   }
