@@ -1,4 +1,5 @@
 import client from "./client";
+import cropToFit from "../../util/image/cropToFit";
 import * as logger from "../../util/logger";
 import { stripIndents } from "common-tags";
 import { DateTime } from "luxon";
@@ -26,41 +27,56 @@ const tweet = async (media: DownloadedMediaData): Promise<void> => {
     // Add explanation to tweetText and truncate it to the number of remaining chars (minus 1, for the ellipsis character)
     tweetText = tweetText.replace(/%expln%/g, truncate(image.explanation, remainingChars - 1));
 
-    try {
-        // Upload media
-        const mediaId = await client.v1.uploadMedia(media.path as string, { mimeType: media.type });
-        logger.debug(`media ID: ${mediaId}`);
-
-        // Add alt text to images
+    try {       
         if (image.media_type === "image") {
-            // Convert the ISO 8601 date to a format more suitable for alt text
-            const date: string = DateTime.fromISO(image.date).toLocaleString(DateTime.DATE_FULL, { locale: "en-gb" });
+            const { path } = await cropToFit(image, media);
+            media.path = path;
 
-            // Fetch alt text from apod.nasa.gov
-            const originalAlt = await fetchAltText();
-
-            // Define the alt text and add it to the media by providing the media ID
-            let altText = stripIndents`
-                NASA Astronomy Picture of the Day for ${date}, showing ${image.title}.
-
-                ${originalAlt}
-
-                Explanation:
-            `;
-
-            // Append explanation to alt text, keeping well within the 1000 character limit
-            altText += ` ${truncate(image.explanation, 900 - (altText.length - 3))}`;
-
-            // Attach alt text to media
-            await client.v1.createMediaMetadata(mediaId, { alt_text: { text: altText } });
+            // Publish Tweet with cropped image
+            setTimeout(publish, 3000, media, image, tweetText);
+            return;
         }
-        
-        // Tweet media with tweetText
-        await client.v1.tweet(tweetText, { media_ids: mediaId });
-        logger.log("✅ Tweet successfully sent");
+
+        // Publish Tweet
+        await publish(media, image, tweetText);        
     } catch (err) {
+        // console.log(err.stack);
         logger.error(`Twitter ${err}`);
     }
+};
+
+const publish = async ({ path, type }: DownloadedMediaData, image: APODResponse, tweetText: string) => {
+    // Upload media
+    const mediaId = await client.v1.uploadMedia(path as string, { mimeType: type });
+    logger.debug(`media ID: ${mediaId}`);
+
+    // Add alt text to images
+    if (image.media_type === "image") {
+        // Convert the ISO 8601 date to a format more suitable for alt text
+        const date: string = DateTime.fromISO(image.date).toLocaleString(DateTime.DATE_FULL, { locale: "en-gb" });
+
+        // Fetch alt text from apod.nasa.gov
+        const originalAlt = await fetchAltText();
+
+        // Define the alt text and add it to the media by providing the media ID
+        let altText = stripIndents`
+            NASA Astronomy Picture of the Day for ${date}, showing ${image.title}.
+
+            ${originalAlt}
+
+            Explanation:
+        `;
+
+        // Append explanation to alt text, keeping well within the 1000 character limit
+        altText += ` ${truncate(image.explanation, 900 - (altText.length - 3))}`;
+
+        // Attach alt text to media
+        await client.v1.createMediaMetadata(mediaId, { alt_text: { text: altText } });
+    }
+    
+    // Tweet media with tweetText
+    await client.v1.tweet(tweetText, { media_ids: mediaId });
+    logger.log("✅ Tweet successfully sent");
 };
 
 export default tweet;
