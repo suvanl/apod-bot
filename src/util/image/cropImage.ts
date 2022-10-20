@@ -13,7 +13,7 @@ const cropImage = async ({ date }: APODResponse, media: DownloadedMediaData, res
 
     // Max aspect ratio is 1.91:1 (width:height)
     if (result === AspectRatioValidationResult.TooBig) {
-        logger.debug("Image aspect ratio too large. Cropping...");
+        logger.debug("Image aspect ratio too large.");
 
         // Keep height the same, crop width
         // For example, an image with dimensions 1080x527:
@@ -31,7 +31,7 @@ const cropImage = async ({ date }: APODResponse, media: DownloadedMediaData, res
 
     // Min aspect ratio is 4:5 (width:height)
     if (result === AspectRatioValidationResult.TooSmall) {
-        logger.debug("Image aspect ratio too small. Cropping...");
+        logger.debug("Image aspect ratio too small.");
 
         // Keep width the same, crop height
         // For example, an image with dimensions 1200x1600:
