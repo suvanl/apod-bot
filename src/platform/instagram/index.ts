@@ -2,6 +2,7 @@ import ffmpeg from "fluent-ffmpeg";
 import addToStory from "./story";
 import validateAspectRatio from "../../util/image/ratio";
 import cropImage from "../../util/image/cropImage";
+import convertToJpeg from "../../util/image/convertToJpeg";
 import AspectRatioValidationResult from "../../enums/AspectRatioValidationResult";
 import * as logger from "../../util/logger";
 import { readFile } from "fs";
@@ -61,7 +62,19 @@ const instaPost = async (media: DownloadedMediaData): Promise<void> => {
                 return;
             }
 
-            // Publish image
+            // If the image isn't a JPEG...
+            if (media.type !== "jpg") {
+                // Convert image to JPEG
+                convertToJpeg(path)
+                    .then(async (media: DownloadedMediaData) => {
+                        // Publish JPEG image
+                        await publishImage(media.path as string, caption);
+                        return;
+                    })
+                    .catch(err => logger.error(err));
+            }
+
+            // Otherwise, publish the image as-is
             await publishImage(path, caption);
         }
 

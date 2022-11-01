@@ -1,6 +1,5 @@
 import sharp from "sharp";
 import DimensionValidationResult from "../../enums/DimensionValidationResult";
-import * as logger from "../logger";
 import { crop } from "./common/crop";
 import { validateDimensions } from "./validateDimensions";
 import { APODResponse, DownloadedMediaData } from "../../types";
@@ -12,7 +11,6 @@ const cropToFit = async ({ date }: APODResponse, media: DownloadedMediaData): Pr
     const image = sharp(media.path);
     const meta = await image.metadata();
 
-    logger.debug("Image exceeds max width and/or height. Cropping...");
     const dimensionStatus = await validateDimensions(media.path as string);
 
     // Crop based on which side of the image exceeds the max size (may be both)

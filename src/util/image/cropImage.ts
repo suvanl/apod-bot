@@ -1,4 +1,5 @@
 import sharp from "sharp";
+import convertToJpeg from "./convertToJpeg";
 import AspectRatioValidationResult from "../../enums/AspectRatioValidationResult";
 import * as logger from "../logger";
 import { crop } from "./common/crop";
@@ -7,13 +8,24 @@ import { APODResponse, DownloadedMediaData } from "../../types";
 // Crops an image to an aspect ratio allowed by Instagram
 // This function uses subtractive correction because using additive correction will result in unattractive results and artefacts
 const cropImage = async ({ date }: APODResponse, media: DownloadedMediaData, result: AspectRatioValidationResult): Promise<DownloadedMediaData> => {
-    const newPath = `img/${date}-crop.${media.type}`;
-    const image = sharp(media.path);
-    const meta = await image.metadata();
+    const newPath = `img/${date}-crop.jpg`;
+    let image = sharp(media.path);
+    let meta = await image.metadata();
+
+    // If the image is not already a JPEG, convert it to one, because Instagram only supports JPEGs
+    if (media.type !== "jpg") {
+        convertToJpeg(media.path as string)
+            .then(async (jpegMedia: DownloadedMediaData) => {
+                media = jpegMedia;
+                image = sharp(jpegMedia.path);
+                meta = await image.metadata();
+            })
+            .catch(err => logger.error(err));
+    }
 
     // Max aspect ratio is 1.91:1 (width:height)
     if (result === AspectRatioValidationResult.TooBig) {
-        logger.debug("Image aspect ratio too large. Cropping...");
+        logger.debug("Image aspect ratio too large.");
 
         // Keep height the same, crop width
         // For example, an image with dimensions 1080x527:
@@ -31,7 +43,7 @@ const cropImage = async ({ date }: APODResponse, media: DownloadedMediaData, res
 
     // Min aspect ratio is 4:5 (width:height)
     if (result === AspectRatioValidationResult.TooSmall) {
-        logger.debug("Image aspect ratio too small. Cropping...");
+        logger.debug("Image aspect ratio too small.");
 
         // Keep width the same, crop height
         // For example, an image with dimensions 1200x1600:

@@ -1,7 +1,10 @@
+import * as logger from "../../logger";
 import { Sharp } from "sharp";
 import { DownloadedMediaData } from "../../../types";
 
-export const crop = async (media: DownloadedMediaData, image: Sharp, newPath: string, newWidth: number, newHeight: number) => {
+export const crop = async (media: DownloadedMediaData, image: Sharp, newPath: string, newWidth: number, newHeight: number): Promise<DownloadedMediaData> => {
+    logger.debug("Cropping image...");
+
     // TODO: ensure image stays centred after cropping
     return new Promise<DownloadedMediaData>((resolve, reject) => {
         image
