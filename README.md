@@ -10,6 +10,7 @@ A social media bot that posts NASA's *Astronomy Picture of the Day* (APOD) every
 - Support for both PNG and JPG image files on both platforms
 - Support for videos on both platforms, with platform-specific requirements being taken into account
 - Images are always posted in the highest available resolution (the only limitation is each platform's file size limit)
+- Every image (or thumbnail if video) is also posted as an Instagram story
 
 ## Technologies used
 - TypeScript
