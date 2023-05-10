@@ -9,6 +9,6 @@ export async function run(timer: Timer, context: InvocationContext): Promise<voi
 }
 
 app.timer("run", {
-    schedule: "0 30 13 * * *",
+    schedule: "0 45 13 * * *",
     handler: run
 });
